@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PomoList</string>
+    <string name="drawer_home">Home</string>
+    <string name="drawer_timer">Timer</string>
+</resources>
