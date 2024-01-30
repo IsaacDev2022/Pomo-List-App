@@ -2,14 +2,11 @@ package com.pomolist.feature_task.presentation.timer
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pomolist.feature_task.domain.model.Task
 import com.pomolist.feature_task.domain.repository.TaskRepository
-import com.pomolist.feature_task.presentation.register_edit_task.TextFieldState
+import com.pomolist.feature_task.presentation.register_edit_task.components.TextFieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

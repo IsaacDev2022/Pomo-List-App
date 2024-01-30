@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
@@ -38,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +49,8 @@ import com.pomolist.feature_task.domain.model.Task
 import com.pomolist.feature_task.presentation.register_edit_task.RegisterScreen
 import com.pomolist.ui.theme.PomoListTheme
 import com.pomolist.ui.theme.primaryColor
+import com.pomolist.ui.theme.secondaryColor
+import com.pomolist.ui.theme.tertiaryColor
 
 @Composable
 fun TaskItem(
@@ -55,8 +60,20 @@ fun TaskItem(
     onDeleteTask: () -> Unit,
     onPomodoroTask: () -> Unit
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
-    var gender by remember { mutableStateOf("") }
+    var colorPriority = Color(android.graphics.Color.parseColor("#8DF181"))
+
+    if (task.priority.equals("1 - Baixo")) {
+        colorPriority = Color(android.graphics.Color.parseColor("#8DF181"))
+    }
+    if (task.priority.equals("2 - Media")) {
+        colorPriority = Color(android.graphics.Color.parseColor("#ECE48B"))
+    }
+    if (task.priority.equals("3 - Alta")) {
+        colorPriority = Color(android.graphics.Color.parseColor("#f5ad89"))
+    }
+    if (task.priority.equals("4 - Urgente")) {
+        colorPriority = Color(android.graphics.Color.parseColor("#f07171"))
+    }
 
     Card(
         modifier = modifier
@@ -67,10 +84,16 @@ fun TaskItem(
                 onLongClick = { onEditTask }
             ),
         shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-        onClick = onEditTask
+        onClick = onEditTask,
+        colors = CardDefaults.cardColors(
+            containerColor = colorPriority
+        )
     ) {
         Row(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
@@ -80,91 +103,53 @@ fun TaskItem(
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "${task.description}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                /* Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${task.priority}",
-                    style = MaterialTheme.typography.bodySmall
-                ) */
-                /*Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${task.minutes}",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${task.seconds}",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${task.amount}",
-                    style = MaterialTheme.typography.bodySmall
-                ) */
-            }
-            Spacer(modifier = Modifier.width(80.dp))
-            Column {
-                Row {
-                    Text(
-                        text = "0",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "/",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "${task.amount}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${task.minutes} minutos",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.widthIn(0.dp, 150.dp)
                 )
             }
+//            Spacer(modifier = Modifier.width(180.dp))
             Row {
-                /*IconButton(onClick = onEditTask) {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = null,
-                        tint = Color.Green
+                Column {
+                    Row {
+                        Text(
+                            text = "0",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "/",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "${task.amount}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "${task.minutes} min",
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
-                IconButton(onClick = onDeleteTask) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = null,
-                        tint = Color.Red
-                    )
-                }
-                IconButton(onClick = onPomodoroTask) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = null,
-                        tint = Color.Blue
-                    )
-                }*/
-                IconButton(onClick = onPomodoroTask) {
-                    Icon(
-                        modifier = Modifier.size(size = 40.dp),
-                        imageVector = Icons.Outlined.PlayCircle,
-                        contentDescription = null,
-                        tint = primaryColor
-                    )
-                }
+                Column(verticalArrangement = Arrangement.SpaceBetween) {
+                    IconButton(onClick = onPomodoroTask) {
+                        Icon(
+                            modifier = Modifier.size(size = 40.dp),
+                            imageVector = Icons.Outlined.PlayCircle,
+                            contentDescription = null,
+                            tint = primaryColor
+                        )
+                    }
 
-                IconButton(onClick = onDeleteTask) {
-                    Icon(
-                        modifier = Modifier.size(size = 30.dp),
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = null,
-                        tint = primaryColor
-                    )
+                    IconButton(onClick = onDeleteTask) {
+                        Icon(
+                            modifier = Modifier.size(size = 30.dp),
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = null,
+                            tint = primaryColor
+                        )
+                    }
                 }
             }
         }

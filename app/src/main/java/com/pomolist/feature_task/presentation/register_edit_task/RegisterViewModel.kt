@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pomolist.feature_task.domain.model.Pomodoro
 import com.pomolist.feature_task.domain.model.Task
 import com.pomolist.feature_task.domain.repository.PomodoroRepository
 import com.pomolist.feature_task.domain.repository.TaskRepository
+import com.pomolist.feature_task.presentation.register_edit_task.components.TextFieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

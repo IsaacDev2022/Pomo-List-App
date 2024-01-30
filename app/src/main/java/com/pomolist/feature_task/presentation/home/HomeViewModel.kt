@@ -36,8 +36,6 @@ class HomeViewModel @Inject constructor(
                     taskRepository.deleteTask(event.task)
                 }
             }
-
-            else -> {}
         }
     }
 }

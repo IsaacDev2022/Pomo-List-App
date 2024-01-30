@@ -2,4 +2,8 @@
 <resources>
 
     <style name="Theme.PomoList" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="ThemeOverlay.PomoList.Dialog" parent="">
+        <item name="android:colorPrimary">@color/mainColor</item>
+    </style>
 </resources>

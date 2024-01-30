@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -224,7 +225,8 @@ fun TimerScreen(
                     onClick = {
                         elapsedTime = 0L
                         currentTime = totalTime
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(primaryColor)
                 ) {
                     Icon(
                         modifier = Modifier
@@ -286,7 +288,9 @@ fun TimerScreen(
                             }
                         }
                         playPauseToggle = !playPauseToggle
-                    }) {
+                    },
+                    colors = ButtonDefaults.buttonColors(primaryColor)
+                ) {
                     if (running && elapsedTime >= 0L) {
                         Icon(
                             imageVector = Icons.Filled.Stop,
@@ -317,7 +321,8 @@ fun TimerScreen(
                         .height(60.dp),
                     onClick = {
                         elapsedTime = 0L
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(primaryColor)
                 ) {
                     Icon(
                         modifier = Modifier

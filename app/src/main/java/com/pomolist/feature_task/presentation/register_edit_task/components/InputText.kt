@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.pomolist.R
-import com.pomolist.ui.theme.Purple40
 import com.pomolist.ui.theme.primaryColor
 
 @Composable

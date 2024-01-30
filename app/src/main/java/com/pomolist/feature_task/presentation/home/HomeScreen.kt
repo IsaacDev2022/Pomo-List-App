@@ -3,6 +3,7 @@
 package com.pomolist.feature_task.presentation.home
 
 import android.R
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -100,32 +101,6 @@ fun HomeScreen(
 
     val navigationState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var selectedItemIndex by rememberSaveable {
-        mutableStateOf(0)
-    }
-
-    val items = listOf(
-        DrawerItem(
-            title = "Home",
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
-        ),
-        DrawerItem(
-            title = "Cronometro",
-            selectedIcon = Icons.Filled.Timer,
-            unselectedIcon = Icons.Outlined.Timer
-        ),
-        DrawerItem(
-            title = "Pomodoro da Tarefa",
-            selectedIcon = Icons.Filled.Favorite,
-            unselectedIcon = Icons.Outlined.FavoriteBorder,
-        ),
-        DrawerItem(
-            title = "Configurações",
-            selectedIcon = Icons.Filled.Settings,
-            unselectedIcon = Icons.Outlined.Settings,
-        )
-    )
 
     Surface {
         androidx.compose.material3.ModalNavigationDrawer(
@@ -167,29 +142,6 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     NavigationDrawerItems(navController, navigationState)
-                    /*items.forEachIndexed { index, drawerItem ->
-                        NavigationDrawerItem(label = {
-                            Text(text = drawerItem.title)
-                        }, selected = index == selectedItemIndex, onClick = {
-                            selectedItemIndex = index
-                            scope.launch {
-                                navigationState.close()
-                            }
-                        }, icon = {
-                            Icon(
-                                imageVector = if (index == selectedItemIndex) {
-                                    drawerItem.selectedIcon
-                                } else drawerItem.unselectedIcon,
-                                contentDescription = drawerItem.title,
-                                tint = primaryColor
-                            )
-                        }, badge = {
-                            drawerItem.badgeCount?.let {
-                                Text(text = drawerItem.badgeCount.toString(), color = primaryColor)
-                            }
-                        }, modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                        )
-                    } */
                 }
             },
             drawerState = navigationState,
@@ -200,7 +152,7 @@ fun HomeScreen(
                         title = {
                             Text(
                                 modifier = Modifier
-                                .padding(start = 10.dp),
+                                    .padding(start = 10.dp),
                                 text = "Home",
                                 color = primaryColor,
                                 textAlign = TextAlign.Center
@@ -219,18 +171,6 @@ fun HomeScreen(
                                     tint = primaryColor,
                                     imageVector = Icons.Filled.Menu,
                                     contentDescription = "Open Menu"
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = { /*TODO*/ }) {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .padding(end = 10.dp),
-                                    imageVector = Icons.Filled.Search,
-                                    contentDescription = "Pesquisar",
-                                    tint = primaryColor
                                 )
                             }
                         }
@@ -265,18 +205,6 @@ fun HomeScreen(
     }
 }
 
-
-@Composable
-fun SearchAction() {
-    IconButton(onClick = { /*TODO*/ }) {
-        Icon(
-            imageVector = Icons.Filled.Search,
-            contentDescription = "Pesquisar",
-            tint = primaryColor
-        )
-    }
-}
-
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
@@ -285,47 +213,71 @@ fun HomeContent(
     onPomodoroTask: (id: Int?) -> Unit,
     tasks: List<Task> = emptyList()
 ) {
-    var selected by remember { mutableStateOf(false) }
+    var selectedIniciados by remember { mutableStateOf(false) }
+    var selectedTerminados by remember { mutableStateOf(false) }
+    var selectedAtrasados by remember { mutableStateOf(false) }
+    var selectedEmAndamento by remember { mutableStateOf(false) }
+    var selectedPrioridade by remember { mutableStateOf(false) }
+    var taskListFilted = tasks
     Column(
         modifier = modifier
     ) {
         Row(modifier = Modifier.padding(15.dp, 0.dp)) {
             FilterChip(
                 modifier = Modifier.padding(5.dp, 0.dp),
-                selected = selected,
-                onClick = { selected = !selected },
+                selected = selectedIniciados,
+                onClick = { selectedIniciados = !selectedIniciados },
                 label = { Text(text = "Iniciados") }
             )
             FilterChip(
                 modifier = Modifier.padding(5.dp, 0.dp),
-                selected = selected,
-                onClick = { selected = !selected },
+                selected = selectedTerminados,
+                onClick = { selectedTerminados = !selectedTerminados },
                 label = { Text(text = "Terminados") }
             )
             FilterChip(
                 modifier = Modifier.padding(5.dp, 0.dp),
-                selected = selected,
-                onClick = { selected = !selected },
+                selected = selectedAtrasados,
+                onClick = { selectedAtrasados = !selectedAtrasados },
                 label = { Text(text = "Atrasados") }
             )
         }
         Row(modifier = Modifier.padding(15.dp, 0.dp)) {
             FilterChip(
                 modifier = Modifier.padding(5.dp, 0.dp),
-                selected = selected,
-                onClick = { selected = !selected },
+                selected = selectedEmAndamento,
+                onClick = { selectedEmAndamento = !selectedEmAndamento },
                 label = { Text(text = "Em Andamento") }
+            )
+            FilterChip(
+                modifier = Modifier.padding(5.dp, 0.dp),
+                selected = selectedPrioridade,
+                onClick = { selectedPrioridade = !selectedPrioridade },
+                label = { Text(text = "Por Prioridade") }
             )
         }
 
         LazyColumn {
-            items(tasks) { task ->
-                TaskItem(
-                    task = task,
-                    onEditTask = { onEditTask(task.id) },
-                    onDeleteTask = { onDeleteTask(task) },
-                    onPomodoroTask = { onPomodoroTask(task.id) }
-                )
+            if (selectedPrioridade) {
+                items(taskListFilted.sortedBy {
+                    it.priority
+                }) { task ->
+                    TaskItem(
+                        task = task,
+                        onEditTask = { onEditTask(task.id) },
+                        onDeleteTask = { onDeleteTask(task) },
+                        onPomodoroTask = { onPomodoroTask(task.id) }
+                    )
+                }
+            } else {
+                items(tasks) { task ->
+                    TaskItem(
+                        task = task,
+                        onEditTask = { onEditTask(task.id) },
+                        onDeleteTask = { onDeleteTask(task) },
+                        onPomodoroTask = { onPomodoroTask(task.id) }
+                    )
+                }
             }
         }
     }
