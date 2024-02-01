@@ -2,7 +2,7 @@
     ExperimentalMaterial3Api::class
 )
 
-package com.pomolist.feature_task.presentation.register_edit_task
+package com.pomolist.feature_task.presentation.register_edit_task.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,6 +49,7 @@ import kotlinx.coroutines.flow.collectLatest
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.TextDecrease
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -62,9 +63,11 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.pomolist.feature_task.presentation.register_edit_task.RegisterEvent
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -183,7 +186,8 @@ fun RegisterContent(
                     tint = primaryColor,
                     contentDescription = "Imagem"
                 )
-            }
+            },
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         Spacer(modifier = modifier.height(10.dp))
@@ -202,7 +206,8 @@ fun RegisterContent(
                     tint = primaryColor,
                     contentDescription = "Imagem"
                 )
-            }
+            },
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
 
         Spacer(modifier = modifier.height(10.dp))

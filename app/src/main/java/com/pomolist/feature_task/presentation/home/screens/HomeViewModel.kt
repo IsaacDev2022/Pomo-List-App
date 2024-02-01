@@ -1,12 +1,12 @@
-package com.pomolist.feature_task.presentation.home
+package com.pomolist.feature_task.presentation.home.screens
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pomolist.feature_task.data.repository.RepositoryImpl
-import com.pomolist.feature_task.domain.model.Task
 import com.pomolist.feature_task.domain.repository.TaskRepository
+import com.pomolist.feature_task.presentation.home.HomeEvent
+import com.pomolist.feature_task.presentation.home.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

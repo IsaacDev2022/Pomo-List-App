@@ -1,11 +1,12 @@
-package com.pomolist.feature_task.presentation.timer
+@file:OptIn(ExperimentalMaterial3Api::class)
+
+package com.pomolist.feature_task.presentation.timer.screens
 
 import android.text.format.DateUtils
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,8 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Refresh
@@ -25,9 +24,13 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,10 +40,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.onSizeChanged
@@ -57,61 +58,33 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
-import kotlin.math.PI
 import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
 
 @Composable
-fun TimerTaskScreen(
+fun TimerScreen(
     navController: NavController,
-    modifier: Modifier = Modifier,
-    timerViewModel: TimerViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ) {
-    // timerViewModel.getPomodoro(1)
-    // val minutesVM = timerViewModel.pomodoro.observeAsState().value?.minutes
-
-    var minutesVM = timerViewModel.minutes
-    var secondsVM = timerViewModel.seconds
-    var amountVM = timerViewModel.amount
-
-    /* var dialogShowing = remember {
-        mutableStateOf(false)
-    } */
-    Icon(
-        imageVector = Icons.Filled.Home,
-        contentDescription = null,
-        tint = Color.Black,
-        modifier = Modifier
-            .padding(20.dp)
-            .height(40.dp)
-            .width(40.dp)
-            .clickable { navController.navigate(Screen.HomeScreen.route) }
-    )
-
-    /* ********************************************************************* */
 
     val timerTextScale = remember { Animatable(1f) }
 
-    /* var minutes by remember { mutableStateOf(minutesVM) }
-    var seconds by remember { mutableStateOf(secondsVM) }
-    var pomodoroQtd by remember { mutableStateOf(amountVM) } */
-
-    var minutes = minutesVM
-    var seconds = secondsVM
-    var pomodoroQtd = amountVM
+    var minutes by remember { mutableStateOf(25L) }
+    var seconds by remember { mutableStateOf(0L) }
+    var pomodoroQtd by remember { mutableStateOf(3) }
 
     var running by remember { mutableStateOf(false) }
 
     var playPauseToggle by remember { mutableStateOf(false) }
 
     val totalTime = minutes * 60L + seconds
+
     var elapsedTime by remember { mutableStateOf(0L) }
+
     val coroutineScope = rememberCoroutineScope()
 
     var currentTime by remember { mutableStateOf(totalTime) }
 
-    // Variáveis de arco
+    // Variáveis do arco
     var value by remember { mutableStateOf(1f) }
     var size by remember { mutableStateOf(IntSize.Zero) }
 
@@ -175,18 +148,6 @@ fun TimerTaskScreen(
                         size = Size(size.width.toFloat(), size.height.toFloat()),
                         style = Stroke(10.dp.toPx(), cap = StrokeCap.Round)
                     )
-                    /* val center = Offset(size.width / 2f, size.height / 2f)
-                    val beta = (250f * value + 145f) * (PI / 180f).toFloat()
-                    val r = size.width / 2f
-                    val a = cos(beta) * r
-                    val b = sin(beta) * r
-                    drawPoints(
-                        listOf(Offset(center.x + a, center.y + b)),
-                        pointMode = PointMode.Points,
-                        color = primaryColor,
-                        strokeWidth = (12.dp * 3f).toPx(),
-                        cap = StrokeCap.Round
-                    ) */
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -219,7 +180,8 @@ fun TimerTaskScreen(
                     onClick = {
                         elapsedTime = 0L
                         currentTime = totalTime
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(primaryColor)
                 ) {
                     Icon(
                         modifier = Modifier
@@ -245,8 +207,8 @@ fun TimerTaskScreen(
                             running = true
                             coroutineScope.launch {
                                 while (pomodoroQtd > 0) {
-                                    minutes = minutesVM
-                                    seconds = secondsVM
+                                    minutes = 25
+                                    seconds = 0
                                     elapsedTime = 0
                                     running = false
                                     while (elapsedTime < totalTime) {
@@ -257,7 +219,8 @@ fun TimerTaskScreen(
                                         value = currentTime / totalTime.toFloat()
                                     }
                                     if (elapsedTime == totalTime) {
-                                        minutes = secondsVM
+                                        minutes = 0L
+                                        seconds = 30L
                                         elapsedTime = 0
                                         var totalTimeInterval = minutes + seconds
                                         currentTime = totalTime
@@ -280,12 +243,9 @@ fun TimerTaskScreen(
                             }
                         }
                         playPauseToggle = !playPauseToggle
-                    }) {
-                    /* Text(
-                        text = if (running && elapsedTime >= 0L) "Stop"
-                        else if (!running && elapsedTime >= 0L) "Start"
-                        else "Restart"
-                    ) */
+                    },
+                    colors = ButtonDefaults.buttonColors(primaryColor)
+                ) {
                     if (running && elapsedTime >= 0L) {
                         Icon(
                             imageVector = Icons.Filled.Stop,
@@ -316,7 +276,8 @@ fun TimerTaskScreen(
                         .height(60.dp),
                     onClick = {
                         elapsedTime = 0L
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(primaryColor)
                 ) {
                     Icon(
                         modifier = Modifier
@@ -333,3 +294,5 @@ fun TimerTaskScreen(
         }
     }
 }
+
+fun Long.formatDuration(): String = DateUtils.formatElapsedTime(this)

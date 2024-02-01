@@ -1,4 +1,4 @@
-package com.pomolist.feature_task.presentation.register_edit_task
+package com.pomolist.feature_task.presentation.register_edit_task.screens
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.pomolist.feature_task.domain.model.Task
 import com.pomolist.feature_task.domain.repository.PomodoroRepository
 import com.pomolist.feature_task.domain.repository.TaskRepository
+import com.pomolist.feature_task.presentation.register_edit_task.RegisterEvent
 import com.pomolist.feature_task.presentation.register_edit_task.components.TextFieldState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -41,16 +42,6 @@ class RegisterViewModel @Inject constructor(
 
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEventFlow = _uiEventFlow.asSharedFlow()
-
-
-    /* private val _minutes = mutableStateOf(TextFieldState())
-    var minute: State<TextFieldState> = _minutes
-
-    private val _seconds = mutableStateOf(TextFieldState())
-    var second: State<TextFieldState> = _seconds
-
-    private val _amount = mutableStateOf(TextFieldState())
-    var amount: State<TextFieldState> = _amount */
 
     var minute = mutableStateOf(0L)
     var second = mutableStateOf(0L)

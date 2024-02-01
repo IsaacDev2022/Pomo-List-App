@@ -18,23 +18,5 @@ abstract class AppDataBase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "pomolistdb_3"
-
-        /*@Volatile
-        private var INSTANCE: AppDataBase? = null
-
-        fun getInstance(context: Context): AppDataBase {
-            synchronized(this) {
-                var instance: AppDataBase? = INSTANCE
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context,
-                        AppDataBase::class.java,
-                        "Pomo_List_DB"
-                    ).build()
-                }
-
-                return instance
-            }
-        } */
     }
 }
