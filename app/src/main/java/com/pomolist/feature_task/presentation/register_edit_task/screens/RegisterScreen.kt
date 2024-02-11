@@ -63,6 +63,9 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
@@ -175,7 +178,9 @@ fun RegisterContent(
     Column(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = modifier.height(30.dp))
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(0.9f),
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .testTag("NameTF"),
             value = name,
             onValueChange = { onEvent(RegisterEvent.EnteredName(it)) },
             label = { Text("Nome") },
@@ -195,7 +200,8 @@ fun RegisterContent(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .height(150.dp),
+                .height(150.dp)
+                .testTag("DescriptionTF"),
             value = description,
             onValueChange = { onEvent(RegisterEvent.EnteredDescription(it)) },
             label = { Text("Descrição") },
@@ -265,7 +271,8 @@ fun RegisterContent(
                             showDatePicker = true
                             focusManager.clearFocus(force = true)
                         }
-                    },
+                    }
+                    .testTag("DateTF"),
                 value = selectedDate,
                 onValueChange = { onEvent(RegisterEvent.EnteredDate(it)) },
                 label = { Text("Data") },
@@ -324,7 +331,8 @@ fun RegisterContent(
                             showTimePicker = true
                             focusManager.clearFocus(force = true)
                         }
-                    },
+                    }
+                    .testTag("TimeTF"),
                 value = selectedTime,
                 onValueChange = { onEvent(RegisterEvent.EnteredTime(it)) },
                 label = { Text("Horário") },
@@ -432,7 +440,10 @@ fun BottomBar(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp, vertical = 30.dp)
-            .height(50.dp),
+            .height(50.dp)
+            .semantics {
+                 contentDescription = "Botão Confirmar"
+            },
         onClick = { onInsertTask() },
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(primaryColor)

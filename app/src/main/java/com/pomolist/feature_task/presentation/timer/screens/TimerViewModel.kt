@@ -17,11 +17,6 @@ class TimerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _timeTask = mutableStateOf(TextFieldState())
-    val timeTask: State<TextFieldState> = _timeTask
-
-    var idTask: Int? = null
-
     var minutes: Long = 0
     var seconds: Long = 0
     var amount: Long = 0

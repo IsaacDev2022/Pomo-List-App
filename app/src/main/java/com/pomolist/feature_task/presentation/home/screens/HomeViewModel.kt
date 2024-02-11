@@ -29,6 +29,15 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    // Método criado apenas para teste
+    fun getRepositories() {
+        taskRepository.getAllTasks().onEach { tasks ->
+            _state.value = state.value.copy(
+                tasks = tasks
+            )
+        }.launchIn(viewModelScope)
+    }
+
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.DeleteTask -> {

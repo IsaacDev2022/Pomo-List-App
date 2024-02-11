@@ -19,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
-    private val pomodoroRepository: PomodoroRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var idTask: Int? = null
@@ -122,8 +121,6 @@ class RegisterViewModel @Inject constructor(
                     _uiEventFlow.emit(UiEvent.SaveTask)
                 }
             }
-
-            else -> {}
         }
     }
 
