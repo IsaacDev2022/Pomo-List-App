@@ -10,7 +10,9 @@
   <li> Jetpack Compose </li>
   <li> Material Design 3 </li>
   <li> Material Icons </li>
+  <li> Dagger/Hilt </li>
   <li> ViewModel </li> 
+  <li> JUnit/Mockito/Robolectric </li>
   <li> RoomDatabase </li>
 </ul>
 <hr>
