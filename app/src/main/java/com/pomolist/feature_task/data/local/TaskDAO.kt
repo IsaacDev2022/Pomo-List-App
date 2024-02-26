@@ -21,9 +21,6 @@ interface TaskDAO {
     @Query("SELECT * FROM Task")
     fun getAllTasks(): Flow<List<Task>>
 
-    @Query("SELECT * FROM Task ORDER BY priority")
-    fun getTasksSortPriority(): Flow<List<Task>>
-
     @Query("SELECT * FROM Task WHERE id = :id")
     suspend fun getTaskById(id: Int): Task?
 

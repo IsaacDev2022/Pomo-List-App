@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
+import androidx.navigation.compose.rememberNavController
 import com.pomolist.core.navigation.Navigation
 import com.pomolist.ui.theme.PomoListTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,7 +18,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             PomoListTheme {
                 Surface {
-                    Navigation()
+                    val navController = rememberNavController()
+                    Navigation(navController)
                 }
             }
         }

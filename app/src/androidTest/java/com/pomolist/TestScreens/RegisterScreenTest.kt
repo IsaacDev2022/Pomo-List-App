@@ -1,4 +1,4 @@
-package com.pomolist
+package com.pomolist.TestScreens
 
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertIsDisplayed
@@ -14,6 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.pomolist.feature_task.presentation.MainActivity
 import com.pomolist.feature_task.presentation.register_edit_task.screens.RegisterScreen
 import com.pomolist.ui.theme.PomoListTheme
+import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
@@ -24,7 +25,10 @@ import org.junit.runner.RunWith
 @HiltAndroidTest
 class RegisterScreenTest {
 
-    @get:Rule
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var navController: NavHostController

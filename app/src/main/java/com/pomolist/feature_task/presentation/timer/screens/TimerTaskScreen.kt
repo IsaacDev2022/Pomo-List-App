@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,35 +60,22 @@ fun TimerTaskScreen(
     timerViewModel: TimerViewModel = hiltViewModel()
 ) {
 
-    var minutesVM = timerViewModel.minutes
-    var secondsVM = timerViewModel.seconds
+//    var minutesVM = timerViewModel.minutes
+//    var secondsVM = timerViewModel.seconds
     var amountVM = timerViewModel.amount
-
-    Icon(
-        imageVector = Icons.Filled.Home,
-        contentDescription = null,
-        tint = Color.Black,
-        modifier = Modifier
-            .padding(20.dp)
-            .height(40.dp)
-            .width(40.dp)
-            .clickable { navController.navigate(Screen.HomeScreen.route) }
-    )
 
     val timerTextScale = remember { Animatable(1f) }
 
-    var minutes = minutesVM
-    var seconds = secondsVM
+    var minutes = timerViewModel.minutes
+    var seconds = timerViewModel.seconds
     var pomodoroQtd = amountVM
 
-    var running by remember { mutableStateOf(false) }
-
-    var playPauseToggle by remember { mutableStateOf(false) }
-
     val totalTime = minutes * 60L + seconds
+
     var elapsedTime by remember { mutableStateOf(0L) }
     val coroutineScope = rememberCoroutineScope()
-
+    var running by remember { mutableStateOf(false) }
+    var playPauseToggle by remember { mutableStateOf(false) }
     var currentTime by remember { mutableStateOf(totalTime) }
 
     // Variáveis de arco
@@ -154,18 +142,6 @@ fun TimerTaskScreen(
                         size = Size(size.width.toFloat(), size.height.toFloat()),
                         style = Stroke(10.dp.toPx(), cap = StrokeCap.Round)
                     )
-                    /* val center = Offset(size.width / 2f, size.height / 2f)
-                    val beta = (250f * value + 145f) * (PI / 180f).toFloat()
-                    val r = size.width / 2f
-                    val a = cos(beta) * r
-                    val b = sin(beta) * r
-                    drawPoints(
-                        listOf(Offset(center.x + a, center.y + b)),
-                        pointMode = PointMode.Points,
-                        color = primaryColor,
-                        strokeWidth = (12.dp * 3f).toPx(),
-                        cap = StrokeCap.Round
-                    ) */
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -197,8 +173,9 @@ fun TimerTaskScreen(
                         .height(60.dp),
                     onClick = {
                         elapsedTime = 0L
-                        currentTime = totalTime
-                    }
+                        value = 1f
+                    },
+                    colors = ButtonDefaults.buttonColors(primaryColor)
                 ) {
                     Icon(
                         modifier = Modifier
@@ -224,8 +201,8 @@ fun TimerTaskScreen(
                             running = true
                             coroutineScope.launch {
                                 while (pomodoroQtd > 0) {
-                                    minutes = minutesVM
-                                    seconds = secondsVM
+                                    minutes = timerViewModel.minutes
+                                    seconds = timerViewModel.seconds
                                     elapsedTime = 0
                                     running = false
                                     while (elapsedTime < totalTime) {
@@ -236,7 +213,7 @@ fun TimerTaskScreen(
                                         value = currentTime / totalTime.toFloat()
                                     }
                                     if (elapsedTime == totalTime) {
-                                        minutes = secondsVM
+                                        minutes = timerViewModel.seconds
                                         elapsedTime = 0
                                         var totalTimeInterval = minutes + seconds
                                         currentTime = totalTime
@@ -259,7 +236,9 @@ fun TimerTaskScreen(
                             }
                         }
                         playPauseToggle = !playPauseToggle
-                    }) {
+                    },
+                    colors = ButtonDefaults.buttonColors(primaryColor)
+                ) {
                     if (running && elapsedTime >= 0L) {
                         Icon(
                             imageVector = Icons.Filled.Stop,

@@ -17,4 +17,5 @@ data class Task(
     var minutes: Long = 0,
     var seconds: Long = 0,
     var amount: Long = 0,
+    var completed: Boolean = false
 )

@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -72,16 +73,13 @@ fun TimerScreen(
     var seconds by remember { mutableStateOf(0L) }
     var pomodoroQtd by remember { mutableStateOf(3) }
 
+    val totalTime = minutes * 60L + seconds
+
     var running by remember { mutableStateOf(false) }
 
     var playPauseToggle by remember { mutableStateOf(false) }
-
-    val totalTime = minutes * 60L + seconds
-
     var elapsedTime by remember { mutableStateOf(0L) }
-
     val coroutineScope = rememberCoroutineScope()
-
     var currentTime by remember { mutableStateOf(totalTime) }
 
     // Variáveis do arco
@@ -102,6 +100,7 @@ fun TimerScreen(
                     .padding(20.dp)
                     .height(40.dp)
                     .width(40.dp)
+                    .testTag("homeIcon")
                     .clickable { navController.navigate(Screen.HomeScreen.route) }
             )
             Spacer(modifier = Modifier.width(220.dp))
@@ -180,6 +179,7 @@ fun TimerScreen(
                     onClick = {
                         elapsedTime = 0L
                         currentTime = totalTime
+                        value = 1f
                     },
                     colors = ButtonDefaults.buttonColors(primaryColor)
                 ) {

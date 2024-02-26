@@ -441,9 +441,7 @@ fun BottomBar(
             .fillMaxWidth()
             .padding(horizontal = 30.dp, vertical = 30.dp)
             .height(50.dp)
-            .semantics {
-                 contentDescription = "Botão Confirmar"
-            },
+            .testTag("btnConfirmar"),
         onClick = { onInsertTask() },
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(primaryColor)
