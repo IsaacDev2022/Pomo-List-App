@@ -21,7 +21,7 @@ class RepositoryImpl(
         return taskDAO.updateTask(task)
     }
 
-    override suspend fun getTaskById(id: Int): Task? {
+    override suspend fun getTaskById(id: Int): Task {
         return taskDAO.getTaskById(id)
     }
 

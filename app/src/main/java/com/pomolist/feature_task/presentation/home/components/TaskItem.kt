@@ -2,6 +2,8 @@
 
 package com.pomolist.feature_task.presentation.home.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +19,8 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,20 +39,27 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pomolist.R
 import com.pomolist.feature_task.domain.model.Task
+import com.pomolist.feature_task.presentation.home.screens.HomeViewModel
 import com.pomolist.ui.theme.PomoListTheme
+import com.pomolist.ui.theme.doneTaskColor
 import com.pomolist.ui.theme.primaryColor
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskItem(
     modifier: Modifier = Modifier,
     task: Task,
     onEditTask: () -> Unit,
     onDeleteTask: () -> Unit,
-    onPomodoroTask: () -> Unit
+    onPomodoroTask: () -> Unit,
+    onCompleted: (Int) -> Unit,
+    homeViewModel: HomeViewModel
 ) {
     var colorPriority = Color(android.graphics.Color.parseColor("#8DF181"))
 
@@ -65,15 +76,6 @@ fun TaskItem(
         colorPriority = Color(android.graphics.Color.parseColor("#f07171"))
     }
 
-    val checkedState = rememberSaveable { mutableStateOf(false) }
-
-    if (checkedState.value) {
-        colorPriority = Color(android.graphics.Color.parseColor("#a6aba6"))
-        task.completed = true
-    } else {
-        task.completed = false
-    }
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -84,7 +86,8 @@ fun TaskItem(
             ),
         shape = RoundedCornerShape(corner = CornerSize(16.dp)),
         onClick = onEditTask,
-        colors = CardDefaults.cardColors(
+        colors = if (task.completed) CardDefaults.cardColors(containerColor = doneTaskColor)
+        else CardDefaults.cardColors(
             containerColor = colorPriority
         )
     ) {
@@ -97,14 +100,14 @@ fun TaskItem(
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "${task.name}",
-                    style = if (checkedState.value) MaterialTheme.typography.titleMedium.copy(textDecoration = TextDecoration.LineThrough)
+                    style = if (task.completed) MaterialTheme.typography.titleMedium.copy(textDecoration = TextDecoration.LineThrough)
                     else MaterialTheme.typography.titleMedium,
                     modifier = Modifier.testTag("txtName")
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${task.completed}",
-                    style = if (checkedState.value) MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough)
+                    text = "${task.date}",
+                    style = if (task.completed) MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough)
                     else MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .widthIn(0.dp, 150.dp)
@@ -154,10 +157,26 @@ fun TaskItem(
                         )
                     }
                 }
-                Checkbox(
-                    checked = checkedState.value,
-                    onCheckedChange = { checkedState.value = it }
-                )
+                IconButton(
+                    onClick = {
+                        onCompleted(task.id)
+                    }
+                ) {
+                    if(task.completed){
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_check_box),
+                            tint = primaryColor,
+                            contentDescription = "Done",
+                        )
+                    }
+                    else{
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_check_box_outline),
+                            tint = primaryColor,
+                            contentDescription = "Done",
+                        )
+                    }
+                }
             }
         }
     }

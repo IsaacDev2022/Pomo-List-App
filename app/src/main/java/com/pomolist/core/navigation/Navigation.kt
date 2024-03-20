@@ -2,6 +2,8 @@
 
 package com.pomolist.core.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -15,12 +17,13 @@ import com.pomolist.feature_task.presentation.register_edit_task.screens.Registe
 import com.pomolist.feature_task.presentation.timer.screens.TimerScreen
 import com.pomolist.feature_task.presentation.timer.screens.TimerTaskScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.HomeScreen.route
+        startDestination = Screen.TimerScreen.route
     ) {
         composable(
             route = Screen.HomeScreen.route

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timer
@@ -59,25 +60,6 @@ fun NavigationDrawerItems(
     NavigationDrawerItem(
         icon = { Icon(Icons.Filled.Timer, contentDescription = "TimerScreen") },
         label = { Text(text = "Pomodoro") },
-        selected = destination?.route == Screen.TimerScreen.route,
-        onClick = {
-            navController.navigate(Screen.TimerScreen.route, navOptions {
-                this.launchSingleTop = true
-                this.restoreState = true
-
-            })
-            scope.launch {
-                drawerState.close()
-            }
-
-        }, modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-    )
-
-    Spacer(modifier = Modifier.height(10.dp))
-
-    NavigationDrawerItem(
-        icon = { Icon(Icons.Filled.Settings, contentDescription = "TimerScreen") },
-        label = { Text(text = "Configurações") },
         selected = destination?.route == Screen.TimerScreen.route,
         onClick = {
             navController.navigate(Screen.TimerScreen.route, navOptions {

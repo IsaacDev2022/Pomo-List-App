@@ -2,6 +2,8 @@
 
 package com.pomolist.feature_task.presentation.home.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,13 +64,12 @@ import com.pomolist.ui.theme.primaryColor
 import com.pomolist.ui.theme.secondaryColor
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     navController: NavController,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val state = homeViewModel.state.value
-
     val navigationState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -161,7 +162,8 @@ fun HomeScreen(
                                 route = Screen.TimerTaskScreen.passIdTimer(it)
                             )
                         },
-                        tasks = state.tasks
+                        onTasksCompleted = homeViewModel::onEvent,
+                        homeViewModel = homeViewModel
                     )
                 },
                 floatingActionButton = {
@@ -176,93 +178,159 @@ fun HomeScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
     onDeleteTask: (task: Task) -> Unit,
     onEditTask: (id: Int?) -> Unit,
     onPomodoroTask: (id: Int?) -> Unit,
-    tasks: List<Task> = emptyList()
+    onTasksCompleted: (HomeEvent) -> Unit,
+    homeViewModel: HomeViewModel
 ) {
-    var selectedIniciados by remember { mutableStateOf(false) }
-    var selectedTerminados by remember { mutableStateOf(false) }
-    var selectedAtrasados by remember { mutableStateOf(false) }
-    var selectedEmAndamento by remember { mutableStateOf(false) }
-    var selectedPrioridade by remember { mutableStateOf(false) }
+    var selectedToday by remember { mutableStateOf(false) }
+    var selectedCompleted by remember { mutableStateOf(false) }
+    var selectedLate by remember { mutableStateOf(false) }
+    var selectedUpcoming by remember { mutableStateOf(false) }
+    var selectedHighPriority by remember { mutableStateOf(false) }
+    var selectedLowPriority by remember { mutableStateOf(false) }
 
-    val checkedState = remember { mutableStateOf(false) }
+    val tasksState = homeViewModel.state.value
+    val tasksToday = homeViewModel.taskListTodayTasks
+    val tasksUpcoming = homeViewModel.taskListUpcoming
+    val tasksLate = homeViewModel.taskListLate
+    val tasksCompleted = homeViewModel.taskListCompleted
+    val tasksHighPriority = homeViewModel.taskListHighPriority
+    val tasksLowPriority = homeViewModel.taskListLowPriority
 
-    var taskListFilted = tasks
     Column(
         modifier = modifier
     ) {
         Row(modifier = Modifier.padding(15.dp, 0.dp)) {
             FilterChip(
                 modifier = Modifier.padding(5.dp, 0.dp),
-                selected = selectedIniciados,
-                onClick = { selectedIniciados = !selectedIniciados },
-                label = { Text(text = "Iniciados") }
+                selected = selectedHighPriority,
+                onClick = { selectedHighPriority = !selectedHighPriority },
+                label = { Text(text = "Maior Prioridade") }
             )
             FilterChip(
                 modifier = Modifier.padding(5.dp, 0.dp),
-                selected = selectedTerminados,
-                onClick = { selectedTerminados = !selectedTerminados },
-                label = { Text(text = "Terminados") }
-            )
-            FilterChip(
-                modifier = Modifier.padding(5.dp, 0.dp),
-                selected = selectedAtrasados,
-                onClick = { selectedAtrasados = !selectedAtrasados },
-                label = { Text(text = "Atrasados") }
+                selected = selectedLowPriority,
+                onClick = { selectedLowPriority = !selectedLowPriority },
+                label = { Text(text = "Menor Prioridade") }
             )
         }
         Row(modifier = Modifier.padding(15.dp, 0.dp)) {
             FilterChip(
                 modifier = Modifier.padding(5.dp, 0.dp),
-                selected = selectedEmAndamento,
-                onClick = { selectedEmAndamento = !selectedEmAndamento },
-                label = { Text(text = "Em Andamento") }
+                selected = selectedUpcoming,
+                onClick = { selectedUpcoming = !selectedUpcoming },
+                label = { Text(text = "Em Breve") }
             )
             FilterChip(
-                modifier = Modifier.padding(5.dp, 0.dp).testTag("priorityChip"),
-                selected = selectedPrioridade,
-                onClick = { selectedPrioridade = !selectedPrioridade },
-                label = { Text(text = "Por Prioridade") }
+                modifier = Modifier.padding(5.dp, 0.dp),
+                selected = selectedLate,
+                onClick = { selectedLate = !selectedLate },
+                label = { Text(text = "Atrasados") }
+            )
+            FilterChip(
+                modifier = Modifier.padding(5.dp, 0.dp),
+                selected = selectedToday,
+                onClick = { selectedToday = !selectedToday },
+                label = { Text(text = "Para Hoje") }
+            )
+        }
+        Row(modifier = Modifier.padding(15.dp, 0.dp)) {
+            FilterChip(
+                modifier = Modifier.padding(5.dp, 0.dp),
+                selected = selectedCompleted,
+                onClick = { selectedCompleted = !selectedCompleted },
+                label = { Text(text = "Terminados") }
             )
         }
 
         LazyColumn {
-            if (selectedPrioridade) {
-                items(taskListFilted.sortedBy {
-                    it.priority
-                }) { task ->
+            if (selectedToday) {
+                items(tasksToday) { task ->
                     TaskItem(
                         task = task,
                         onEditTask = { onEditTask(task.id) },
                         onDeleteTask = { onDeleteTask(task) },
-                        onPomodoroTask = { onPomodoroTask(task.id) }
+                        onPomodoroTask = { onPomodoroTask(task.id) },
+                        onCompleted = { onTasksCompleted(HomeEvent.OnCompleted(it, true)) },
+                        homeViewModel = homeViewModel
                     )
                 }
             }
-            else if (selectedTerminados) {
-                items(taskListFilted.filter {
-                    it.completed
-                }) { task ->
+            else if (selectedUpcoming) {
+                items(tasksUpcoming) { task ->
                     TaskItem(
                         task = task,
                         onEditTask = { onEditTask(task.id) },
                         onDeleteTask = { onDeleteTask(task) },
-                        onPomodoroTask = { onPomodoroTask(task.id) }
+                        onPomodoroTask = { onPomodoroTask(task.id) },
+                        onCompleted = { onTasksCompleted(HomeEvent.OnCompleted(it, true)) },
+                        homeViewModel = homeViewModel
+                    )
+                }
+            }
+            else if (selectedCompleted) {
+                items(tasksCompleted) { task ->
+                    TaskItem(
+                        task = task,
+                        onEditTask = { onEditTask(task.id) },
+                        onDeleteTask = { onDeleteTask(task) },
+                        onPomodoroTask = { onPomodoroTask(task.id) },
+                        onCompleted = { onTasksCompleted(HomeEvent.OnCompleted(it, false)) },
+                        homeViewModel = homeViewModel
+                    )
+                }
+            }
+            else if (selectedLate) {
+                items(tasksLate) { task ->
+                    TaskItem(
+                        task = task,
+                        onEditTask = { onEditTask(task.id) },
+                        onDeleteTask = { onDeleteTask(task) },
+                        onPomodoroTask = { onPomodoroTask(task.id) },
+                        onCompleted = { onTasksCompleted(HomeEvent.OnCompleted(it, true)) },
+                        homeViewModel = homeViewModel
+                    )
+                }
+            }
+            else if (selectedHighPriority) {
+                items(tasksHighPriority) { task ->
+                    TaskItem(
+                        task = task,
+                        onEditTask = { onEditTask(task.id) },
+                        onDeleteTask = { onDeleteTask(task) },
+                        onPomodoroTask = { onPomodoroTask(task.id) },
+                        onCompleted = { onTasksCompleted(HomeEvent.OnCompleted(it, true)) },
+                        homeViewModel = homeViewModel
+                    )
+                }
+            }
+            else if (selectedLowPriority) {
+                items(tasksLowPriority) { task ->
+                    TaskItem(
+                        task = task,
+                        onEditTask = { onEditTask(task.id) },
+                        onDeleteTask = { onDeleteTask(task) },
+                        onPomodoroTask = { onPomodoroTask(task.id) },
+                        onCompleted = { onTasksCompleted(HomeEvent.OnCompleted(it, true)) },
+                        homeViewModel = homeViewModel
                     )
                 }
             }
             else {
-                items(tasks) { task ->
+                items(tasksState.tasks) { task ->
                     TaskItem(
                         task = task,
                         onEditTask = { onEditTask(task.id) },
                         onDeleteTask = { onDeleteTask(task) },
-                        onPomodoroTask = { onPomodoroTask(task.id) }
+                        onPomodoroTask = { onPomodoroTask(task.id) },
+                        onCompleted = { onTasksCompleted(HomeEvent.OnCompleted(it, true)) },
+                        homeViewModel = homeViewModel
                     )
                 }
             }

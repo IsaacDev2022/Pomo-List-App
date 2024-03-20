@@ -2,6 +2,15 @@
 
 package com.pomolist.feature_task.presentation.timer.screens
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings.Global.getString
 import android.text.format.DateUtils
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Canvas
@@ -32,10 +41,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,14 +57,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startForegroundService
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.pomolist.R
 import com.pomolist.core.navigation.Screen
+import com.pomolist.feature_task.presentation.MainActivity
+import com.pomolist.feature_task.presentation.timer.TimerService
+import com.pomolist.feature_task.presentation.timer.components.NotificationService
 import com.pomolist.ui.theme.primaryColor
 import com.pomolist.ui.theme.secondaryColor
 import kotlinx.coroutines.cancelChildren
@@ -69,22 +91,31 @@ fun TimerScreen(
 
     val timerTextScale = remember { Animatable(1f) }
 
-    var minutes by remember { mutableStateOf(25L) }
-    var seconds by remember { mutableStateOf(0L) }
+    var minutes by rememberSaveable { mutableStateOf(1L) }
+    var seconds by rememberSaveable { mutableStateOf(0L) }
     var pomodoroQtd by remember { mutableStateOf(3) }
 
-    val totalTime = minutes * 60L + seconds
+    var totalTime by remember { mutableLongStateOf(minutes * 60L + seconds) }
 
     var running by remember { mutableStateOf(false) }
 
     var playPauseToggle by remember { mutableStateOf(false) }
-    var elapsedTime by remember { mutableStateOf(0L) }
+    var elapsedTime by remember { mutableLongStateOf(0L) }
     val coroutineScope = rememberCoroutineScope()
-    var currentTime by remember { mutableStateOf(totalTime) }
+    var currentTime by remember { mutableLongStateOf(totalTime) }
 
     // Variáveis do arco
     var value by remember { mutableStateOf(1f) }
     var size by remember { mutableStateOf(IntSize.Zero) }
+
+    // Notificações
+//    val timerNotification = NotificationService(LocalContext.current)
+
+    // Service
+//    var context: Context = LocalContext.current
+//    var foregroundService: Intent? = null
+//
+//    foregroundService = Intent(context, TimerService::class.java)
 
     Column(
         modifier = modifier
@@ -178,7 +209,7 @@ fun TimerScreen(
                         .height(60.dp),
                     onClick = {
                         elapsedTime = 0L
-                        currentTime = totalTime
+//                        currentTime = totalTime
                         value = 1f
                     },
                     colors = ButtonDefaults.buttonColors(primaryColor)
@@ -203,19 +234,17 @@ fun TimerScreen(
                         if (playPauseToggle) {
                             running = false
                             coroutineScope.coroutineContext.cancelChildren()
+//                            context.stopService(foregroundService)
                         } else {
+//                            context.startService(foregroundService)
                             running = true
                             coroutineScope.launch {
                                 while (pomodoroQtd > 0) {
-                                    minutes = 25
-                                    seconds = 0
-                                    elapsedTime = 0
-                                    running = false
+                                    minutes = 1L
+                                    seconds = 0L
                                     while (elapsedTime < totalTime) {
-                                        ensureActive()
-                                        elapsedTime += 1
+                                        elapsedTime++
                                         delay(1000)
-                                        currentTime -= 1L
                                         value = currentTime / totalTime.toFloat()
                                     }
                                     if (elapsedTime == totalTime) {
@@ -224,19 +253,18 @@ fun TimerScreen(
                                         elapsedTime = 0
                                         var totalTimeInterval = minutes + seconds
                                         currentTime = totalTime
+//                                        timerNotification.showNotification()
                                         while (elapsedTime < totalTimeInterval) {
-                                            ensureActive()
-                                            elapsedTime += 1
+                                            elapsedTime++
                                             delay(1000)
-                                            currentTime -= 1L
                                             value = currentTime / totalTime.toFloat()
                                         }
                                         while (elapsedTime > 0) {
-                                            ensureActive()
-                                            elapsedTime -= 1
+                                            elapsedTime--
                                             delay(100)
                                             value = currentTime / totalTime.toFloat()
                                         }
+//                                        timerNotification.showNotification()
                                         pomodoroQtd -= 1
                                     }
                                 }
@@ -276,6 +304,7 @@ fun TimerScreen(
                         .height(60.dp),
                     onClick = {
                         elapsedTime = 0L
+//                        timerNotification.showNotification()
                     },
                     colors = ButtonDefaults.buttonColors(primaryColor)
                 ) {

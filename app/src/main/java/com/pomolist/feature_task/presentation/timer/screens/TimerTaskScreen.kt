@@ -204,7 +204,6 @@ fun TimerTaskScreen(
                                     minutes = timerViewModel.minutes
                                     seconds = timerViewModel.seconds
                                     elapsedTime = 0
-                                    running = false
                                     while (elapsedTime < totalTime) {
                                         ensureActive()
                                         elapsedTime += 1

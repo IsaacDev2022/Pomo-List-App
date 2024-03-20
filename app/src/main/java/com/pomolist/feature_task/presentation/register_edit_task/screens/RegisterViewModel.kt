@@ -21,7 +21,7 @@ class RegisterViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    var idTask: Int? = null
+    var idTask: Int = 0
 
     // Task
     private val _nameTask = mutableStateOf(TextFieldState())
@@ -50,7 +50,7 @@ class RegisterViewModel @Inject constructor(
         savedStateHandle.get<Int>("id")?.let { id ->
             if (id != -1) {
                 viewModelScope.launch {
-                    taskRepository.getTaskById(id)?.also {
+                    taskRepository.getTaskById(id).also {
                         idTask = id
                         _nameTask.value = nameTask.value.copy(
                             text = it.name
